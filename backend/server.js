@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 4000;
 
 // CORS middleware with explicit origin
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'https://accountant-s-network-1.onrender.com',
   credentials: true,
 };
 app.use(cors(corsOptions));
