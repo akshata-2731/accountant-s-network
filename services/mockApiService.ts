@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://accountant-s-network-1.onrender.com/";
+const API_BASE_URL = "https://accountant-s-network-1.onrender.com";
 
 
 
