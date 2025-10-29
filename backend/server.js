@@ -14,8 +14,8 @@ const dbConfig = {
   password: 'dZl53tw8f22fO0Wx', // your MySQL password
   database: 'reffral_db',
   port: 4000,
-  ssl: {
-    ca: fs.readFileSync('C:/Users/hp/Downloads/isrgrootx1.pem')
+   ssl: {
+    ca: fs.readFileSync(path.join(__dirname, 'certs', 'isrgrootx1.pem'))
   }
 };
 
