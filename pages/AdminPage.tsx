@@ -266,65 +266,74 @@ const AdminPage: React.FC = () => {
                 
                 <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                     <div className="lg:col-span-2">
-                        <Card>
-                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-                                <h2 className="text-2xl font-bold font-serif text-brand-gray">Referral Management</h2>
-                                <div className="flex items-center gap-2 w-full sm:w-auto">
-                                    <input
-                                        type="text"
-                                        placeholder="Search..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal sm:text-sm transition"
-                                    />
-                                     <Button onClick={handleExportCSV} variant="outline" className="py-2 px-3 text-sm flex-shrink-0 flex items-center gap-2">
-                                        <ArrowDownTrayIcon className="w-4 h-4" />
-                                        <span>Export</span>
-                                    </Button>
-                                </div>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm text-left text-gray-500">
-                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                                        <tr>
-                                            <th scope="col" className="px-6 py-3">Client Name</th>
-                                            <th scope="col" className="px-6 py-3">Referrer</th>
-                                            <th scope="col" className="px-6 py-3">Date</th>
-                                            <th scope="col" className="px-6 py-3">Current Status</th>
-                                            <th scope="col" className="px-6 py-3">Reminder</th>
-                                            <th scope="col" className="px-6 py-3">Update Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredReferrals.map(referral => (
-                                            <tr key={referral.id} className="bg-white border-b hover:bg-gray-50">
-                                                <td className="px-6 py-4 font-medium text-gray-900">{referral.clientName}</td>
-                                                <td className="px-6 py-4">{referral.referrerName}</td>
-                                                <td className="px-6 py-4 text-gray-600">{referral.dateSubmitted}</td>
-                                                <td className="px-6 py-4"><StatusBadge status={referral.status} /></td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <button onClick={() => setReminderModalReferral(referral)} className={`p-1 rounded-full transition-colors ${referral.reminderDate ? 'text-brand-teal hover:bg-teal-100' : 'text-gray-400 hover:bg-gray-100'}`} title={referral.reminderDate ? `Reminder set for ${new Date(referral.reminderDate).toLocaleString()}` : 'Set a reminder'}>
-                                                        <BellIcon className="w-5 h-5" />
-                                                    </button>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <select
-                                                        value={referral.status}
-                                                        onChange={(e) => handleStatusChange(referral.id, e.target.value as ReferralStatus)}
-                                                        disabled={updatingId === referral.id}
-                                                        className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
-                                                    >
-                                                        {Object.values(ReferralStatus).map(status => (
-                                                            <option key={status} value={status}>{status}</option>
-                                                        ))}
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </Card>
+                       <Card>
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+    <h2 className="text-2xl font-bold font-serif text-brand-gray">Referral Management</h2>
+    <div className="flex items-center gap-2 w-full sm:w-auto">
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="flex-grow sm:flex-grow-0 w-full sm:w-auto px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal sm:text-sm transition"
+      />
+      <Button onClick={handleExportCSV} variant="outline" className="py-2 px-3 text-sm flex-shrink-0 flex items-center gap-2">
+        <ArrowDownTrayIcon className="w-4 h-4" />
+        <span>Export</span>
+      </Button>
+    </div>
+  </div>
+  <div className="overflow-x-auto">
+    <table className="w-full text-sm text-left text-gray-500">
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th className="px-6 py-3">Client Name</th>
+          <th className="px-6 py-3">Mobile Number</th>
+          <th className="px-6 py-3">Email Address</th>
+
+          <th className="px-6 py-3">Date</th>
+          <th className="px-6 py-3">Current Status</th>
+          <th className="px-6 py-3">Reminder</th>
+          <th className="px-6 py-3">Update Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredReferrals.map(referral => (
+          <tr key={referral.id} className="bg-white border-b hover:bg-gray-50">
+            <td className="px-6 py-4 font-medium text-gray-900">{referral.clientName}</td>
+            <td className="px-6 py-4">{referral.mobile}</td>
+            <td className="px-6 py-4">{referral.email}</td>
+            
+            <td className="px-6 py-4 text-gray-600">{referral.dateSubmitted}</td>
+            <td className="px-6 py-4"><StatusBadge status={referral.status} /></td>
+            <td className="px-6 py-4 text-center">
+              <button
+                onClick={() => setReminderModalReferral(referral)}
+                className={`p-1 rounded-full transition-colors ${referral.reminderDate ? 'text-brand-teal hover:bg-teal-100' : 'text-gray-400 hover:bg-gray-100'}`}
+                title={referral.reminderDate ? `Reminder set for ${new Date(referral.reminderDate).toLocaleString()}` : 'Set a reminder'}
+              >
+                <BellIcon className="w-5 h-5" />
+              </button>
+            </td>
+            <td className="px-6 py-4">
+              <select
+                value={referral.status}
+                onChange={(e) => handleStatusChange(referral.id, e.target.value as ReferralStatus)}
+                disabled={updatingId === referral.id}
+                className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
+              >
+                {Object.values(ReferralStatus).map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Card>
+
                     </div>
                     <div className="lg:col-span-1">
                         <TopReferrers referrers={topReferrers} />

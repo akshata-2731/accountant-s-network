@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 4000;
 
 // CORS middleware with explicit origin
 const corsOptions = {
-  origin: 'https://accountant-s-network-1.onrender.com',
+  origin: 'http://localhost:3000',
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -114,20 +114,18 @@ app.get('/user/data', async (req, res) => {
 
 // POST /referral/submit to submit a new referral
 app.post('/referral/submit', async (req, res) => {
-  const { clientName, mobile, expectedCommission } = req.body;
+  const { clientName, mobile, email, service, expectedCommission, additionalNotes } = req.body;
 
-  if (!clientName || !mobile || !expectedCommission) {
-    return res.status(400).json({ error: 'All fields are required' });
+  if (!clientName || !mobile || !email || !service || !expectedCommission) {
+    return res.status(400).json({ error: 'All required fields must be provided' });
   }
 
   try {
     const conn = await getConnection();
-
     await conn.execute(
-      'INSERT INTO referrals (clientName, mobile, expectedCommission, status, dateSubmitted) VALUES (?, ?, ?, ?, NOW())',
-      [clientName, mobile, expectedCommission, 'Pending']
+      'INSERT INTO referrals (clientName, mobile, email, service, expectedCommission, additionalNotes, status, dateSubmitted) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())',
+      [clientName, mobile, email, service, expectedCommission, additionalNotes || '', 'Pending']
     );
-
     await conn.end();
     res.status(200).json({ message: 'Referral submitted successfully' });
   } catch (error) {
@@ -135,6 +133,7 @@ app.post('/referral/submit', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 

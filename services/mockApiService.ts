@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://accountant-s-network-2.onrender.com";
+const API_BASE_URL = "http://localhost:4000";
 
 
 
@@ -58,7 +58,10 @@ export const getUserData = (user: User): Promise<{ referrals: Referral[]; wallet
 export const submitReferral = async (
   clientName: string,
   mobile: string,
-  expectedCommission: number
+  email: string,
+  service: string,
+  expectedCommission: string,
+  additionalNotes?: string
 ): Promise<Referral> => {
   try {
     const res = await fetch(`${API_BASE_URL}/referral/submit`, {
@@ -67,8 +70,10 @@ export const submitReferral = async (
       body: JSON.stringify({
         clientName,
         mobile,
-        expectedCommission: Number(expectedCommission),
-        // userId removed here
+        email,
+        service,
+        expectedCommission,
+        additionalNotes,
       }),
     });
 
@@ -83,6 +88,7 @@ export const submitReferral = async (
     throw new Error(error.message || 'Submission failed due to unexpected error');
   }
 };
+
 
 // Admin API
 
@@ -117,14 +123,14 @@ export const setReferralReminder = (referralId: string, reminderDate: string | n
       return res.json();
     });
 };
-export const updateUserProfile = (name: string, email: string, token: string): Promise<User> => {
+export const updateUserProfile = (name: string, email: string, phone:string,token: string): Promise<User> => {
   return fetch(`${API_BASE_URL}/user/profile`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify({ name, email }),
+    body: JSON.stringify({ name, email , phone}),
   }).then(res => {
     if (!res.ok) throw new Error('Failed to update profile');
     return res.json();

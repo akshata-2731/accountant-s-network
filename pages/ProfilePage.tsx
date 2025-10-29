@@ -12,30 +12,30 @@ interface ProfilePageProps {
 const ProfilePage: React.FC<ProfilePageProps> = ({ user, onProfileUpdate }) => {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email || '');
+  const [phone, setPhone] = useState(user.phone || '');
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
-  
-  const hasChanges = name !== user.name || email !== (user.email || '');
+
+  const hasChanges = name !== user.name || email !== (user.email || '') || phone !== (user.phone || '');
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!hasChanges) return;
+    e.preventDefault();
+    if (!hasChanges) return;
 
-  setIsSaving(true);
-  setMessage('');
-  try {
-    const updatedUser = await updateUserProfile(name, email, user.token);  // Pass token here
-    onProfileUpdate(updatedUser);
-    setMessage('Profile updated successfully!');
-    setTimeout(() => setMessage(''), 3000);
-  } catch (error) {
-    console.error('Failed to update profile:', error);
-    setMessage('Failed to update profile. Please try again.');
-  } finally {
-    setIsSaving(false);
-  }
-};
-
+    setIsSaving(true);
+    setMessage('');
+    try {
+      const updatedUser = await updateUserProfile(name, email, phone, user.token); // Pass phone now
+      onProfileUpdate(updatedUser);
+      setMessage('Profile updated successfully!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      setMessage('Failed to update profile. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const returnUrl = user.role === 'admin' ? '#/admin' : '#/dashboard';
 
@@ -47,7 +47,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onProfileUpdate }) => {
             <h1 className="text-3xl font-bold font-serif text-brand-gray">My Profile</h1>
             <p className="mt-2 text-gray-600">View and update your personal information.</p>
           </div>
-          
+
           <Card>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -74,6 +74,18 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onProfileUpdate }) => {
                 />
               </div>
 
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal"
+                  required
+                />
+              </div>
+
               {user.role === 'admin' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Account Status</label>
@@ -82,19 +94,19 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onProfileUpdate }) => {
                   </p>
                 </div>
               )}
-              
+
               <div className="border-t border-gray-200 pt-5">
-                 <div className="flex justify-end items-center gap-4">
-                    {message && <p className={`text-sm ${message.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
-                    <a href={returnUrl}>
-                        <Button type="button" variant="outline">
-                            Back
-                        </Button>
-                    </a>
-                    <Button type="submit" disabled={isSaving || !hasChanges}>
-                        {isSaving ? 'Saving...' : 'Save Changes'}
+                <div className="flex justify-end items-center gap-4">
+                  {message && <p className={`text-sm ${message.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
+                  <a href={returnUrl}>
+                    <Button type="button" variant="outline">
+                      Back
                     </Button>
-                 </div>
+                  </a>
+                  <Button type="submit" disabled={isSaving || !hasChanges}>
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                </div>
               </div>
 
             </form>
