@@ -123,14 +123,14 @@ export const setReferralReminder = (referralId: string, reminderDate: string | n
       return res.json();
     });
 };
-export const updateUserProfile = (name: string, email: string, phone:string,token: string): Promise<User> => {
+export const updateUserProfile = (name: string, email: string,  token: string): Promise<User> => {
   return fetch(`${API_BASE_URL}/user/profile`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify({ name, email , phone}),
+    body: JSON.stringify({ name, email }),
   }).then(res => {
     if (!res.ok) throw new Error('Failed to update profile');
     return res.json();

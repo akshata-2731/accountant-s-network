@@ -12,20 +12,18 @@ interface ProfilePageProps {
 const ProfilePage: React.FC<ProfilePageProps> = ({ user, onProfileUpdate }) => {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email || '');
-  const [phone, setPhone] = useState(user.phone || '');
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  const hasChanges = name !== user.name || email !== (user.email || '') || phone !== (user.phone || '');
+  const hasChanges = name !== user.name || email !== (user.email || '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!hasChanges) return;
-
     setIsSaving(true);
     setMessage('');
     try {
-      const updatedUser = await updateUserProfile(name, email, phone, user.token); // Pass phone now
+      const updatedUser = await updateUserProfile(name, email, user.token);
       onProfileUpdate(updatedUser);
       setMessage('Profile updated successfully!');
       setTimeout(() => setMessage(''), 3000);
@@ -45,71 +43,84 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onProfileUpdate }) => {
         <div className="max-w-2xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold font-serif text-brand-gray">My Profile</h1>
-            <p className="mt-2 text-gray-600">View and update your personal information.</p>
           </div>
-
           <Card>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Full Name</label>
-                <input
-                  type="text"
-                  id="fullName"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  value={phone}
-                  onChange={e => setPhone(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal"
-                  required
-                />
-              </div>
-
-              {user.role === 'admin' && (
+            <div className="space-y-6 p-6">
+              {/* ADMIN: Only show username */}
+              {user.role === 'admin' ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Account Status</label>
-                  <p className={`mt-1 text-sm font-semibold ${user.isVerified ? 'text-green-600' : 'text-orange-600'}`}>
-                    {user.isVerified ? 'Verified' : 'Not Verified'}
-                  </p>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    id="username"
+                    value="hello"
+                    readOnly
+                    className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm text-gray-500 cursor-not-allowed"
+                  />
                 </div>
+              ) : (
+                // USER: show full name + email, editable
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      id="fullName"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand-teal focus:border-brand-teal"
+                      required
+                    />
+                  </div>
+                  <div className="flex justify-end items-center gap-4">
+                    {message && (
+                      <p
+                        className={`text-sm ${
+                          message.includes('successfully') ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        {message}
+                      </p>
+                    )}
+                    <a href={returnUrl}>
+                      <Button type="button" variant="outline">
+                        Back
+                      </Button>
+                    </a>
+                    <Button type="submit" disabled={isSaving || !hasChanges}>
+                      {isSaving ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                  </div>
+                </form>
               )}
-
-              <div className="border-t border-gray-200 pt-5">
+              {/* Always show Back button for admin */}
+              {user.role === 'admin' && (
                 <div className="flex justify-end items-center gap-4">
-                  {message && <p className={`text-sm ${message.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
                   <a href={returnUrl}>
                     <Button type="button" variant="outline">
                       Back
                     </Button>
                   </a>
-                  <Button type="submit" disabled={isSaving || !hasChanges}>
-                    {isSaving ? 'Saving...' : 'Save Changes'}
-                  </Button>
                 </div>
-              </div>
-
-            </form>
+              )}
+            </div>
           </Card>
         </div>
       </div>
