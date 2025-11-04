@@ -102,6 +102,7 @@ const ReferralForm: React.FC<{ user: User; onReferralSubmitted: (newReferral: Re
         email,
         selectedService,
         expectedCommission,
+        user.id,
         additionalNotes
       );
       onReferralSubmitted(newReferral);

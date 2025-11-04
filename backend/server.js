@@ -87,7 +87,7 @@ app.get('/admin/data', async (req, res) => {
 });
 
 
-app.get('/user/data', async (req, res) => {
+app.get('/userdata', async (req, res) => {
   const userId = req.query.userId;
   if (!userId) {
     return res.status(400).json({ error: 'userId is required' });
@@ -97,7 +97,9 @@ app.get('/user/data', async (req, res) => {
     const conn = await getConnection();
     console.log('Fetching data for user:', userId);
 
-    const [referrals] = await conn.execute('SELECT * FROM referrals ORDER BY dateSubmitted DESC');
+    
+const [referrals] = await conn.execute('SELECT * FROM referrals WHERE userId = ? ORDER BY dateSubmitted DESC', [userId]);
+
     const [walletRows] = await conn.execute('SELECT * FROM commission_wallet WHERE userId = ?', [userId]);
     const [payouts] = await conn.execute('SELECT * FROM payouts WHERE userId = ?', [userId]);
 
@@ -114,17 +116,17 @@ app.get('/user/data', async (req, res) => {
 
 // POST /referral/submit to submit a new referral
 app.post('/referral/submit', async (req, res) => {
-  const { clientName, mobile, email, service, expectedCommission, additionalNotes } = req.body;
+  const { clientName, mobile, email, service, expectedCommission, additionalNotes, userId } = req.body;
 
-  if (!clientName || !mobile || !email || !service || !expectedCommission) {
-    return res.status(400).json({ error: 'All required fields must be provided' });
+  if (!clientName || !mobile || !email || !service || !expectedCommission || !userId) {
+    return res.status(400).json({ error: 'All required fields must be provided, including userId' });
   }
 
   try {
     const conn = await getConnection();
     await conn.execute(
-      'INSERT INTO referrals (clientName, mobile, email, service, expectedCommission, additionalNotes, status, dateSubmitted) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())',
-      [clientName, mobile, email, service, expectedCommission, additionalNotes || '', 'Pending']
+      'INSERT INTO referrals (clientName, mobile, email, service, expectedCommission, additionalNotes, status, dateSubmitted, userId) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)',
+      [clientName, mobile, email, service, expectedCommission, additionalNotes || '', 'Pending', userId]
     );
     await conn.end();
     res.status(200).json({ message: 'Referral submitted successfully' });
