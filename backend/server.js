@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 4000;
 
 // CORS middleware with explicit origin
 const corsOptions = {
-  origin: 'https://accountant-s-network-1.onrender.com',
+  origin: 'https://referralnetwork.accountantsfactory.com',
   credentials: true,
 };
 app.use(cors(corsOptions));
